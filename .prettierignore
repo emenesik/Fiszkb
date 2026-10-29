@@ -1,0 +1,6 @@
+src/vendor/
+index.html
+backup-*/
+tests/results/
+node_modules/
+assets/

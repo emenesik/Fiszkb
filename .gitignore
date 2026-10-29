@@ -1,0 +1,12 @@
+node_modules/
+__pycache__/
+*.pyc
+backup-*/
+*.zip
+release/
+tests/.browsers/
+tests/results/*
+!tests/results/.gitkeep
+.env
+.env.*
+!.env.example

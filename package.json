@@ -1,0 +1,22 @@
+{
+    "name": "fiszkb",
+    "version": "1.10.13",
+    "private": true,
+    "description": "A portable flashcard app with local storage, spaced repetition and optional R2 sync.",
+    "engines": {
+        "node": ">=20"
+    },
+    "scripts": {
+        "build": "python tools/build.py",
+        "test": "node --test --test-concurrency=1 tests/*.test.cjs",
+        "check": "node tools/check-source.cjs",
+        "format:check": "prettier --check src/js src/css src/sw.js tools/*.cjs tests/*.test.cjs tests/*harness.cjs",
+        "package": "python tools/package.py"
+    },
+    "devDependencies": {
+        "@babel/parser": "7.28.5",
+        "playwright": "1.62.1",
+        "prettier": "3.6.2"
+    },
+    "license": "GPL-3.0-only"
+}
