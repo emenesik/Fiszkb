@@ -1,6 +1,6 @@
 # Fiszkb
 
-**Flashcards, spaced repetition, local practice and a dungeon powered by studying.**
+**A local-first flashcard app with spaced repetition, Anki support and optional cloud sync.**
 
 **[Use Fiszkb at fiszkb.pages.dev](https://fiszkb.pages.dev)** · **[Source on GitHub](https://github.com/emenesik/Fiszkb)** · Version **1.10.13** · English / Polish
 
@@ -56,18 +56,18 @@ The Add view accepts multiple question/answer pairs:
 [Q] What is the derivative of $x^2$? [/Q] [A] $2x$. [/A]
 ```
 
-The markers delimit the sides; content can span multiple lines. The form can insert card/image markers, clear a draft, save to a deck or download the entered set.
+The markers delimit the sides; content can span multiple lines. Save the set to a deck or download it as a file.
 
 | Content | How it works |
 | --- | --- |
-| Text and formatting | Supported formatting is rendered; imported HTML is processed rather than executed as an arbitrary page. |
+| Text and formatting | Write questions and answers with supported rich formatting. |
 | Images | Attach files, paste images into the editor or use supported URLs. Either side can contain an image, with a larger preview. |
 | Audio | Attach or reference audio on either side; play manually or enable automatic playback. |
 | Math | Inline `$...$` and display `$$...$$` use the embedded KaTeX renderer. |
 | Cloze deletions | Anki-style `{{c1::hidden text}}` is supported. Different numbers create separate cards; reusing a number groups deletions. The editor can turn a selection into a cloze. |
 | Imported Anki content | Supported templates, reverse cards, clozes, Image Occlusion, images and audio have import handling. See [Import and export](#import-export-and-backups). |
 
-Edit cards from the collection or during study. The management view has search and bounded pages, avoiding a DOM element for every card in a large collection.
+Edit cards from the collection or during study. The management view provides search and pagination.
 
 ### Organization
 
@@ -75,9 +75,9 @@ Edit cards from the collection or during study. The management view has search a
 - Move decks between folders or study a folder's decks together.
 - Select multiple items for available bulk operations such as moving, exporting, pinning and deleting.
 - Archive decks/folders to hide them from the active collection, then restore them.
-- Move deleted items to Trash, restore them or permanently delete them. Archive and Trash serve different purposes.
+- Move deleted items to Trash, restore them or permanently delete them.
 - Export individual decks, folders, notes or selected groups.
-- Merge two decks and choose which one remains. Exact card signatures identify duplicates; practice history is merged and the more advanced scheduling record is retained where applicable. This is not AI-based semantic deduplication.
+- Merge decks, choose which one remains, and combine matching cards and their practice history. Duplicate matching uses card content rather than semantic similarity.
 
 ### Search
 
@@ -92,7 +92,7 @@ q:mitochondria -is:image
 is:math
 ```
 
-Operators: `deck:`, `folder:`, `q:`, `a:` and `is:`. Supported `is:` values include `new`, `learn`, `due`, `young`, `mature`, `mastered`, `hard`, `easy`, `lapsed`, `leech`, `basic`, `cloze`, `io`, `image`, `audio`, `media`, `nomedia`, `math`, `kanji`, `pinned` and `archived`. These are Fiszkb's classifications; “mastered” does not prove permanent recall.
+Operators include `deck:`, `folder:`, `q:`, `a:` and `is:`. Status and content filters include due/new cards, clozes, image occlusion, audio, images, math and kanji. The search view provides the full filter controls.
 
 ## Studying and scheduling
 
@@ -100,7 +100,7 @@ Operators: `deck:`, `folder:`, `q:`, `a:` and `is:`. Supported `is:` values incl
 
 Reveal the answer, then choose **Again**, **Hard**, **Good** or **Easy**. Easy is optional and can be enabled in Settings. Normal grades update the schedule; buttons show their proposed intervals.
 
-Reverse the initial side, shuffle or use insertion order, with per-deck overrides. Undo restores the previous card and its scheduling state, rather than just navigating backward.
+Reverse the initial side, shuffle or use insertion order, with per-deck overrides. Undo restores the previous card and its scheduling state.
 
 ### Three schedulers
 
@@ -110,9 +110,9 @@ Reverse the initial side, shuffle or use insertion order, with per-deck override
 | **SM-2** | Fiszkb's SM-2-based interval/ease rules. | All grades can return after their deadline. |
 | **SM-2 Fiszkb** | The same interval formula as SM-2. | Again returns in the current session. Hard/Good/Easy require both an elapsed deadline and entry into a later session. |
 
-The SM-2 modes differ in **return behavior**, not their formula. With default interval settings, a new card graded Hard gets 5 minutes, Good gets 10 minutes and Easy gets 1 day. Again gets 1 minute. Subsequent intervals depend on grade, previous interval and ease. These are Fiszkb's rules, not every scheduling rule used by Anki.
+The SM-2 modes differ in **return behavior**, not their formula. With default settings, a new card graded Hard gets 5 minutes, Good gets 10 minutes and Easy gets 1 day. Again gets 1 minute. Subsequent intervals depend on grade, previous interval and ease.
 
-FSRS stores stability, difficulty, last review time and lapses. Positive ratings use whole-day intervals, subject to deck settings. It uses bundled weights; it does **not** train a personal parameter optimizer. Desired retention is a model input, not a guaranteed recall percentage.
+FSRS tracks stability, difficulty, review time and lapses, using whole-day intervals for positive ratings. Its bundled weights are fixed; it does not train personal parameters. Retention is a model target.
 
 Changing schedulers preserves progress. FSRS derives an initial estimate from interval/ease data when a card lacks native FSRS state.
 
@@ -136,7 +136,7 @@ Settings affect subsequent grades. **Recalculate review dates** separately updat
 
 Free practice works outside the scheduled queue and does **not** update SRS schedules or earn Iskierkb.
 
-The scratchpad is a study drawing surface with undo/clear controls and normal, enlarged or disabled modes. It is separate from Notes.
+The scratchpad provides a drawing surface during study, with undo and clear controls.
 
 ## Syntezb
 
@@ -157,11 +157,7 @@ The local analyzer uses text, similarity, ambiguity checks, scheduling informati
 | Does it match? | Decide whether a displayed question/answer pair belongs together. |
 | Recall | Reveal the original answer and assess whether you remembered it. |
 
-The UI selects forms adaptively; it does not expose every internal type as a separate selectable mode. Unsuitable or ambiguous material falls back to simpler recall. Specialized cards can retain their original presentation.
-
-**Syntezb is local practice, not generative AI.** It uses source card material, sends no collection to an AI provider and does not change SRS dates. It is not a factual checker: incorrect source material remains incorrect.
-
-Worker analysis uses acknowledged batches and streamed results. The main-thread fallback yields between batches, and selectors/results are bounded. Automated coverage includes 40,000 synthetic cards; that is a test case, not a universal memory or performance guarantee.
+Syntezb selects exercise forms automatically and falls back to recall when the material is unsuitable for matching tasks. It runs locally, uses your existing card material and does not change SRS review dates or send cards to an AI provider.
 
 ## Notes, statistics and appearance
 
@@ -173,13 +169,11 @@ The optional Notes tab supports titles, pinning, search and JSON import/export. 
 
 Statistics cover daily study time, goals, streaks, history, collection/deck counts and memory stages. FSRS analysis also presents model-derived forgetting/recall information and a 14-day review-load forecast.
 
-The timer counts time in the study view, stops while hidden and rejects large suspended-timer gaps. The daily goal defaults to 15 minutes. A streak reflects days meeting the relevant time goal, not app launches. Memory-health and forecast displays are estimates from the schedule.
+The timer counts time in the study view and pauses while hidden. The daily goal defaults to 15 minutes, and streaks reflect days meeting the goal. Recall and workload forecasts are estimates from the stored schedule.
 
 ### Appearance
 
-OLED is the initial theme. OLED and Hacker are dark-only; other palettes offer light/dark variants. A custom accent can generate a palette.
-
-Settings include visual effects, Legacy appearance, a compact top bar, simplified interface, study counts, Easy, audio and scratchpad controls. Holding a title reveals long names. Optional visual Easter eggs include animated cats and do not change card schedules.
+Choose themes, light/dark palettes, a custom accent, visual effects and simplified or compact layouts. Some themes, including OLED, are dark-only. Settings also control study counts, audio, the Easy button and scratchpad visibility.
 
 English/Polish switches the **interface**, not your card content. Translating a deck is a separate explicit action.
 
@@ -199,28 +193,28 @@ Optional AI features use **Google's Gemini API with your own key**. Flashcards, 
 
 1. Configure an API key and model; the app can request the available model list.
 2. Add files and/or pasted text, a deck name and optional instructions.
-3. Choose a batch size: 10, 15, 20, 30, 40 or 60 cards.
+3. Choose how many cards to generate per batch.
 4. Review the generated batch, edit cards and select what to save.
 5. Continue, skip/regenerate a batch, change instructions or finish. Accepted cards go into a deck in the **AI Flashcards** folder.
 
-The workspace supports saving/resuming local work, streamed output, retries and some model fallback. Available models and quotas depend on Google; not every account/file will generate successfully.
+Save and resume unfinished generation sessions locally. Available models and API quotas depend on Google.
 
 Up to **15 files** can be added at once. Processing routes differ:
 
 | Input | What reaches the model |
 | --- | --- |
-| PDF, supported images and audio | File content, inline for smaller material or through the provider's upload route where needed. |
+| PDF, supported images and audio | The files are sent to Gemini. |
 | DOCX, PPTX, XLSX, ODT/ODP/ODS, EPUB, RTF | Text extracted in the browser; embedded pictures and original layout are not preserved by this route. |
 | TXT, Markdown, CSV/TSV, JSON, XML, YAML, HTML and supported subtitle/text formats | Decoded or extracted text. |
 | Pasted material | The supplied text. |
 
-Old binary DOC/PPT/XLS files need conversion to a supported modern format or PDF. The app limits combined extracted/pasted text to 2,500,000 characters; provider limits also apply.
+Convert old binary DOC/PPT/XLS files to a supported modern format or PDF. Input limits also depend on the selected model.
 
 You can instead copy the supplied card-generation prompt into an external AI tool, then paste its `[Q]`/`[A]` output into Add.
 
 ### Translate a deck
 
-Translate targets the **current interface language**, English or Polish. All card text in that deck is sent to the configured AI in batches. The prompt asks it to preserve studied vocabulary while translating explanations, and validation checks protected technical/media markers and card identities.
+Translate targets the **current interface language**, English or Polish. The deck's text is sent to the configured AI, with instructions to preserve studied vocabulary while translating explanations.
 
 Preview before applying. Cancelling leaves the original unchanged; applying is refused if the source text changed during the operation. Scheduling and media are retained.
 
@@ -252,8 +246,6 @@ Scheduling transfer covers intervals, review dates, repetitions and ease fields.
 
 Without stored media, a backup is ordinary JSON. With media, it can use Fiszkb's own container: a JSON header followed by binary media records, still named `.json`. Reimport through Fiszkb; generic JSON parsers need not accept the whole file.
 
-Media is assembled in bounded internal chunks to reduce peak memory use. This is not an 85 MB cap on the whole collection. Browser storage, file handling and memory still set practical limits.
-
 Full backups do not copy every device cache or credential. R2/API keys, local voice settings and the pitch database use separate storage. Keep downloaded backups outside the browser to protect against clearing site data.
 
 ## Cloud synchronization
@@ -280,7 +272,7 @@ CORS example for the official hosted app:
 ]
 ```
 
-Exposing ETag response headers is optional: the compatible read path obtains object versions from S3 listing responses. HEAD is not required. A private/local copy has another origin and may need another CORS entry. Never commit credentials or share a filled-in configuration screenshot.
+If you use another host or a local copy, add its origin to the bucket's CORS policy. Keep the R2 credentials private.
 
 ### Shared and local data
 
@@ -293,13 +285,11 @@ Exposing ETag response headers is optional: the compatible read path obtains obj
 | Accepted AI-generated cards, as ordinary deck content | Unaccepted batches and source files in the local AI generation workspace |
 | Iskierkb wallet and built-in Lochb state | Current ordinary SRS session queue |
 
-Automatic sync is scheduled around changes and lifecycle events, with deferrals during study/import and relevant dialogs. Exiting ordinary study, Syntezb or Arcadb waits for the local checkpoint before scheduling sync. It reacts to reconnection and pending edits on focus. Upload-on-page-leave is best-effort; closing the browser does not guarantee transfer completion.
+Automatic sync runs around local changes and when you leave study, Syntezb or Arcadb, after saving locally. It also checks pending changes on reconnection and focus. Sync is deferred during study/import and relevant dialogs. Closing the browser may interrupt an upload, so check sync status before switching devices.
 
 **Synchronize** checks the shared revision before selecting upload/download. If both copies changed since their last shared state, it preserves the conflict for an explicit choice instead of choosing by device clock. **Force upload/download** are deliberate replacement actions: review the displayed save information first.
 
-Changed decks upload as immutable revisions before a conditional manifest commit. Downloads are staged and checked; failed transfers or changed local snapshots are not marked synchronized. These safeguards do not make sync an independent backup service.
-
-Objects are **not end-to-end encrypted by Fiszkb**. Old revisions are retained; automatic historical garbage collection is not implemented. Use current versions on all devices. Format 3 needs writers from 1.10.8 onward, with compatible R2 reads fixed in 1.10.10+. Independent translation-cleanup workers need the matching helper.
+R2 data is **not end-to-end encrypted by Fiszkb**. Historical revisions are retained without automatic cleanup. Keep separate backups and use the current app version on all syncing devices.
 
 See [docs/SYNC.md](docs/SYNC.md) for commit rules, conflicts, compatibility and translation-history retention.
 
@@ -307,48 +297,11 @@ See [docs/SYNC.md](docs/SYNC.md) for commit rules, conflicts, compatibility and 
 
 Arcadb is optional and initially hidden. **Tap/click the Fiszkb logo seven times within three seconds**, or type **`arcadb`** outside an editable field, to toggle access.
 
-### Iskierkb
+Normal study earns **Iskierkb**: 1 for Hard, 2 for Good and 3 for Easy. Again and free practice earn none. Positive ratings less than **2.3 seconds** apart do not earn currency, but still update the card's schedule. Undo reverses the corresponding award.
 
-Normal scheduled card ratings earn game currency:
+**Lochb** is a dungeon game that spends Iskierkb as torch fuel. It includes exploration, combat, three character classes with combat-charged ultimates, loot, upgrades and resource production. Manual and automatic play are available. Its rules and controls are covered by the in-game help.
 
-| Grade | Iskierkb |
-| --- | ---: |
-| Again | 0 |
-| Hard | 1 |
-| Good | 2 |
-| Easy | 3 |
-
-A positive rating less than **2.3 seconds** after the previous positive rating earns nothing. Every positive click advances the clock, including blocked rewards; Again, Undo and session changes do not reset it. Fast grades still update SRS. Free practice earns nothing, and Undo reverses its corresponding award.
-
-This is a client-side game economy, not server-verified anti-cheat or a monetary balance. There is no Iskierkb payment/purchase system.
-
-### Lochb
-
-Explore generated floors, defeat each guardian and descend. The action-driven torch consumes Iskierkb as fuel; moving, fighting and other actions cost light.
-
-Features include:
-
-- manual/automatic play, floor repetition, minimap, floor themes and omens;
-- telegraphed enemy attacks, parries, clickable weak spots, critical hits, bleeding and potions;
-- levels, equipment upgrades, a companion, loot, three equipped artifacts, rarities and smelting;
-- resource production, mines, crafting, merchants, events and blood-boon progression;
-- bestiary entries revealed by defeating creatures;
-- distinct death/retreat reset rules, explained by in-game help;
-- touch controls, keyboard input, sound settings, fullscreen and save/reset controls.
-
-| Class | Ultimate | Effect |
-| --- | --- | --- |
-| Knight | Oath Verdict | Armor-piercing strike with counterattack protection. |
-| Monk | Five Strikes of Dawn | Guaranteed strikes and health restoration. |
-| Brute | Colossus Fury | Armor-ignoring strike and a stun. |
-
-Ultimate charge comes from successful hits, parries, weak spots and kills, **not elapsed time**. It persists between fights; class changes, death and retreat reset it. Activate the screen button or **U** at full charge during combat. Potions briefly add a subtle effect to the portrait.
-
-### Imported games
-
-Import compatible HTML games or use the downloadable bridge/specification to adapt a game. Custom games run in sandboxed iframes and use the Arcadb bridge for saves/spending. The supplied bridge also supports standalone mode.
-
-Import trusted games: sandboxing limits integration with the parent app, but does not guarantee arbitrary HTML has no network behavior or unsafe content. Custom game files/saves stay local and are excluded from R2. Their copyrights/licenses remain separate from Fiszkb's.
+Arcadb also supports importing compatible HTML games, exporting/importing game saves and downloading a bridge/specification for developing games. Imported games run in sandboxed iframes; use trusted files. Their code and individual saves remain local and are excluded from R2 sync.
 
 ## Keyboard controls
 
@@ -363,9 +316,8 @@ The **?** dialog contains the full context-specific shortcut list.
 | Forms | `Ctrl+Enter` save card or entered set |
 | Cloze editing | `Ctrl+Shift+C` new number; `Ctrl+Alt+Shift+C` reuse number |
 | Notes | Formatting shortcuts, `Ctrl+Z`, `Ctrl+Y` / `Ctrl+Shift+Z` |
-| Lochb | `W/S` forward/back, `A/D` turn, `Q/E` sidestep, `Space` action, `2` parry/second choice, `3` potion, `U` ultimate |
 
-Shortcuts depend on the active view and are suppressed or handled differently in text fields/modals. They are not all global commands.
+Shortcuts depend on the active view and text field. Game controls are listed in the game's help.
 
 ## Offline use and data storage
 
@@ -382,7 +334,7 @@ Shortcuts depend on the active view and are suppressed or handled differently in
 
 Collections/media use IndexedDB; small preferences use localStorage. The installed shell uses a service-worker cache. Data belongs to a browser profile and origin: another browser, private session, domain or copied HTML path may have separate storage.
 
-Saves are coalesced and failures trigger recovery messages, but browser storage can still be denied, filled or removed. A browser save is not a separate backup. If saving fails, export before closing or clearing data.
+Browser storage can be denied, filled or removed. Keep downloaded backups; if saving fails, export before closing or clearing data.
 
 Updates refresh the cached app shell without requiring a collection reset. Check the version in Settings after deployment; allow the service worker to update and reload again if an old shell remains visible.
 
@@ -403,11 +355,9 @@ Updates refresh the cached app shell without requiring a collection reset. Check
 | `LICENSE` | Terms for Fiszkb's own code |
 | `THIRD-PARTY-NOTICES.txt` | Separate third-party notices |
 
-Source parts are concatenated in classic-script order. They are build inputs, not individual runtime downloads. CSS is compiled, fonts and lossless graphics are embedded, and math code activates when needed.
-
 ### Build and check
 
-Use **Node.js 20+** and **Python 3.9+**. Verification uses Node 24 and Python 3.12.
+Use **Node.js 20+** and **Python 3.9+**.
 
 ```text
 npm ci
@@ -416,15 +366,15 @@ npm run check
 npm run format:check
 ```
 
-Edit `src/`, then rebuild. Python's standard library builds without network access or a bundler. The root application license is embedded in the HTML alongside the separate third-party notices.
+Edit `src/`, then rebuild the generated runtime files. See [architecture notes](docs/ARCHITECTURE.md) for the source organization and build design.
 
-For private local development:
+Run locally:
 
 ```text
 python -m http.server 8000 --bind 127.0.0.1
 ```
 
-Visit `http://127.0.0.1:8000`. Self-hosting and public deployments are permitted under [GPL v3.0](LICENSE).
+Visit `http://127.0.0.1:8000`.
 
 ### Tests
 
@@ -436,11 +386,7 @@ npx playwright install webkit
 npm test
 ```
 
-Coverage includes recovery/persistence, single-file operation, graphics, games, 40,000-card analysis and synchronization. SRS tests include **384 scheduler/history/scope/grade combinations** and **360 mixed-answer steps** checked against an independent model.
-
-The full release suite passed **114/114 tests on 1.10.13**, including seven Syntezb exit-sync scenarios. Fresh-install language and saved preferences are also covered. [Verification](docs/VERIFICATION.md) records the scope; [tests/README.md](tests/README.md) explains reproduction.
-
-Cloud automation uses synthetic data and simulated S3/R2 with disposable browser storage. Windows WebKit is not a physical-iPad benchmark. Real-device confirmation has also been reported for R2/Syntezb with a large collection. A recent full Anki-collection import was not manually rechecked during this release work.
+Tests cover scheduling, persistence and recovery, single-file operation, large collections, synchronization and games. See [tests/README.md](tests/README.md) for coverage and [verification notes](docs/VERIFICATION.md) for recorded results and test limitations.
 
 ### Packaging and deployment
 
@@ -449,12 +395,12 @@ npm run build
 npm run package
 ```
 
-- **`fiszkb-1.10.13-deployment.zip`** contains eight runtime files: HTML, service worker, two manifests, icon, screenshot, third-party notices and `.well-known/assetlinks.json`.
+- **`fiszkb-1.10.13-deployment.zip`** contains the runtime files for static hosting.
 - **`fiszkb-1.10.13-github.zip`** contains maintained source, generated runtime, this README, license, tools, tests and documentation.
 
-The deployment contains no personal collection/credentials. The GitHub archive excludes dependency/browser downloads, local backups, previous releases and test results. Every archived file is read back and compared with source bytes. Hashes are recorded in `tests/results/release-1.10.13.json`.
+The GitHub archive excludes dependency downloads, personal data, local backups and test results.
 
-You can publish the runtime to static HTTPS hosting under the GPL's terms. The official public installation is **[fiszkb.pages.dev](https://fiszkb.pages.dev)**. For your own deployment, review `.well-known/assetlinks.json`: its existing Android association belongs to the original Android app and should not be reused for an unrelated app.
+Publish the deployment archive's full contents to static HTTPS hosting. The official installation is **[fiszkb.pages.dev](https://fiszkb.pages.dev)**. If you also distribute an Android app, configure `.well-known/assetlinks.json` for your own app rather than reusing the original association.
 
 ## License and contributions
 
