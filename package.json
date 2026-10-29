@@ -1,6 +1,6 @@
 {
     "name": "fiszkb",
-    "version": "1.10.13",
+    "version": "1.10.14",
     "private": true,
     "description": "A portable flashcard app with local storage, spaced repetition and optional R2 sync.",
     "engines": {

@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = '1.10.13';
+const VERSION = '1.10.14';
 const BASE = new URL('./', self.location).pathname;
 
 const CACHE_PREFIX = 'fiszkb-' + encodeURIComponent(BASE) + '-';

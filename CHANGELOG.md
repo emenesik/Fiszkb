@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.10.14
+
+- Localize generated audio buttons and Kana/Kanji replay captions inside flashcards, whose source content remains excluded from interface translation.
+- Update these controls when the interface language changes and when stroke diagrams finish rendering. Preserve the card's original text.
+
 ## 1.10.13
 
 - Automatically synchronize after leaving Syntezb when R2 autosync is enabled. Preserve the outgoing view until navigation recognizes the transition.

@@ -2,7 +2,7 @@
 
 **A local-first flashcard app with spaced repetition, Anki support and optional cloud sync.**
 
-**[Use Fiszkb at fiszkb.pages.dev](https://fiszkb.pages.dev)** · **[Source on GitHub](https://github.com/emenesik/Fiszkb)** · Version **1.10.13** · English / Polish
+**[Use Fiszkb at fiszkb.pages.dev](https://fiszkb.pages.dev)** · **[Source on GitHub](https://github.com/emenesik/Fiszkb)** · Version **1.10.14** · English / Polish
 
 Fiszkb is a browser app for building a flashcard collection and studying it with FSRS or one of two SM-2 modes. It also includes notes, Anki import/export, Japanese learning tools, AI-assisted card creation, Syntezb practice and the optional Arcadb game area.
 
@@ -395,8 +395,8 @@ npm run build
 npm run package
 ```
 
-- **`fiszkb-1.10.13-deployment.zip`** contains the runtime files for static hosting.
-- **`fiszkb-1.10.13-github.zip`** contains maintained source, generated runtime, this README, license, tools, tests and documentation.
+- **`fiszkb-1.10.14-deployment.zip`** contains the runtime files for static hosting.
+- **`fiszkb-1.10.14-github.zip`** contains maintained source, generated runtime, this README, license, tools, tests and documentation.
 
 The GitHub archive excludes dependency downloads, personal data, local backups and test results.
 
